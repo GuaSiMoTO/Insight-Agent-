@@ -30,12 +30,11 @@ _embedding = GoogleGenerativeAIEmbeddings(model=EMBED_MODEL, google_api_key=GOOG
 
 def ingest_pdfs(pdf_paths: List[Path]) -> QdrantVectorStore:
     """Read PDFs → split → embed → upsert into Qdrant. Returns the store."""
-    raw_text: str = load_pdfs(pdf_paths)
-    docs: List[Document] = _splitter.create_documents([raw_text])
+    raw_text: List[Document] = load_pdfs(pdf_paths)
+    docs: List[Document] = _splitter.split_documents(raw_text)
 
     # ⚠️ If you want metadata (page numbers, file names) add them here
     # for d in docs: d.metadata = {...}
-
     vector_store = QdrantVectorStore.from_documents(
         documents=docs,
         embedding=_embedding,
