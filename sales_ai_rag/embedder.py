@@ -23,6 +23,7 @@ from pdf_utils import load_pdfs
 _splitter = RecursiveCharacterTextSplitter(
     chunk_size=CHUNK_SIZE,
     chunk_overlap=CHUNK_OVERLAP,
+    separators=["\n\n", "\n", " ", ""]
 )
 _embedding = GoogleGenerativeAIEmbeddings(model=EMBED_MODEL, google_api_key=GOOGLE_API_KEY)
 

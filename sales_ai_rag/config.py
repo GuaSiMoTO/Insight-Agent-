@@ -17,5 +17,5 @@ QDRANT_API_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.
 QDRANT_COLLECTION: str = "sales_ai_store"
 
 # Chunking
-CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", 450))
+CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", 100))
 CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", 50))

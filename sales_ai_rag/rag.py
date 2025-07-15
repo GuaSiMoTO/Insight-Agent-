@@ -30,6 +30,6 @@ def build_rag_chain(retriever) -> RunnablePassthrough:
             "context": retriever | (lambda docs: "\n---\n".join(d.page_content for d in docs)),
         }
         | DEFAULT_PROMPT
-        | _llm
+        | _llm  
         | _parser
     )
