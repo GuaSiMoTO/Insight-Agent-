@@ -1,0 +1,1 @@
+N8N_WEBHOOK_URL = "https://rinconz.app.n8n.cloud/webhook-test/cfcc6b7c-c839-4945-bc38-b1ea7493fb98" 
