@@ -14,7 +14,8 @@ st.write("Sube tus documentos PDF a la carpeta 'PDFs' y pregúntame lo que quier
 # ¡IMPORTANTE!: No compartas tu API key en código público.
 # Considera usar st.secrets para producción o variables de entorno.
 llm = GoogleGenerativeAI(
-    model="gemini-1.5-flash",
+
+    model="gemini-2.5-flash",
     google_api_key='AIzaSyB1379yvRoIEpbZe7FQKrt-lMLxHiQH_X8'
 )
 
@@ -24,6 +25,8 @@ pdf_folder = "PDFs"
 # Inicializar estado de la sesión para el contenido del PDF y el historial del chat
 if 'full_combined_pdf_content' not in st.session_state:
     st.session_state.full_combined_pdf_content = ""
+if 'transcript' not in st.session_state:
+    st.session_state.transcript = ""
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 
@@ -60,17 +63,85 @@ def load_pdfs(folder):
     st.success("✅ Contenido de todos los PDFs cargado exitosamente.")
     return combined_content
 
+
+@st.cache_resource
+def load_transcript():
+    with open("transcribe/transcription.txt", "r", encoding="utf-8") as transcript_file:
+        transcript = transcript_file.read()
+        return transcript
+    
+
+# Cargar el contenido combinado de los PDFs al inicio
+
 # Cargar PDFs al inicio de la aplicación si no están cargados
 if not st.session_state.full_combined_pdf_content:
     st.session_state.full_combined_pdf_content = load_pdfs(pdf_folder)
     if not st.session_state.full_combined_pdf_content:
         st.stop() # Detener la ejecución si no hay contenido cargado
 
+
+if not st.session_state.transcript:
+    st.session_state.transcript = load_transcript()
+    if not st.session_state.transcript:
+        st.stop() # Detener la ejecución si no hay transcripción cargada
+
 # --- Preparar el Prompt con el Contenido del PDF ---
 prompt_template = ChatPromptTemplate.from_messages([
-    ("system", "Eres un asistente útil. Responde a la pregunta basándote únicamente en el siguiente contenido. Si la respuesta no está en el contenido, indica que no tienes esa información. Si la pregunta no está relacionada con el contenido, indica que no puedes responderla con la información proporcionada.\n\nContenido del documento:\n{context}"),
-    ("user", "Pregunta: {question}")
-])
+    ("system", """Eres un asistente útil. Responde a la pregunta basándote únicamente en el siguiente contenido.
+
+Actúa como Insight Agent, un observador inteligente especializado en ventas consultivas avanzadas. Acabas de escuchar una reunión interna entre el director comercial y su equipo, donde se han discutido oportunidades de venta.
+
+Tu tarea es analizar la conversación usando las metodologías Insight Selling, Challenger Sale, y marcos de inteligencia competitiva. Usa como referencia la teoría aportada sobre Insight Selling en el siguiente contexto: {context}
+
+Devuelve el siguiente análisis estructurado cuando se te pregunte de insights o estrategias de venta de la reunión::
+
+---
+
+🔥 Resumen Provocador
+- ¿Qué parte de la narrativa desafió al cliente o provocó reflexión?
+- ¿Se detectó algún insight de negocio o interacción relevante?
+- ¿Qué oportunidad latente no fue explotada?
+
+---
+
+📈 Resumen de Posibles Insights
+Incluye insights mencionados o detectados implícitamente por sector o cliente:
+
+Insights de Negocio:
+- Tendencias o riesgos no considerados por el cliente.
+- Comparativas con competidores del sector.
+- Cambios regulatorios o de comportamiento del consumidor que justifican acción.
+
+Insights de Interacción:
+- Preguntas que llevaron a replantear la situación.
+- Momentos de reflexión conjunta o conexión emocional.
+- Frases que revelan un punto ciego del cliente.
+
+---
+
+🧠 Score de Narrativa
+Evalúa del 0 al 5:
+- Tensión Constructiva
+- Diferenciación
+- Conexión Humana
+- Colaboración
+
+---
+
+🧭 Prompts para Coaching
+1. ¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?
+2. ¿Dónde puedes invitar al cliente a co-crear la solución contigo?
+3. ¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?
+
+---
+
+Sé preciso, estratégico y usa lenguaje natural basado en la conversación real.
+     Si la respuesta no está en el contenido, indica que no tienes esa información. Si la pregunta no está relacionada con el contenido, indica que no puedes responderla con la información proporcionada.\n\nContenido del documento:\n{context}
+     
+    Tras dar el resumen con la estructura anterior, responde a las preguntas del usuario de forma directa y concisa, basándote en el contenido del PDF y la transcripción de la reunión. Si no tienes información suficiente, indica que no puedes responder.\n"""),
+    ("user", "Pregunta: {question}. Conversación: {transcript}" )
+=======
+# --- Preparar el Prompt con el Contenido del PDF ---
 
 # Crea la cadena: prompt -> llm -> parser
 chain = prompt_template | llm | StrOutputParser()
@@ -97,7 +168,9 @@ if user_question:
                 # Invocar la cadena, pasando el contenido combinado de los PDFs como 'context'
                 response = chain.invoke({
                     "context": st.session_state.full_combined_pdf_content,
-                    "question": user_question
+                    "question": user_question,
+                    "transcript": st.session_state.transcript
+
                 })
                 st.markdown(response)
                 # Añadir respuesta del LLM al historial del chat

@@ -25,12 +25,12 @@ if uploaded_files:
 
         st.success("PDFs ingested. Ask your questions below.")
 
-        question = st.text_input("Your question:")
+question = st.text_input("Your question:")
 
-        if question:
-            with st.spinner("Getting answer..."):
-                answer = rag_chain.invoke(question)
-            st.markdown(f"**Answer:** {answer}")
+if question:
+    with st.spinner("Getting answer..."):
+        answer = rag_chain.invoke(question)
+        st.markdown(f"**Answer:** {answer}")
 
         # Uncomment to delete temp files after use
         # import os

@@ -1,0 +1,5 @@
+# Example config file for Zoom Meeting Bot
+zoom_meeting_url: "https://us05web.zoom.us/j/86715528318?pwd=TV4mWe0XSQ2bWGCd5bdfeU0fmq9XKx.1"
+output_dir: "/tmp"
+sample_rate: 16000
+channels: 1
