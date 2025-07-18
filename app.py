@@ -89,7 +89,7 @@ Actúa como Insight Agent, un observador inteligente especializado en ventas con
 
 Tu tarea es analizar la conversación usando las metodologías Insight Selling, Challenger Sale, y marcos de inteligencia competitiva. Usa como referencia la teoría aportada sobre Insight Selling en el siguiente contexto: {context}
 
-Devuelve el siguiente análisis estructurado:
+Devuelve el siguiente análisis estructurado cuando se te pregunte de insights o estrategias de venta de la reunión::
 
 ---
 
@@ -132,7 +132,9 @@ Evalúa del 0 al 5:
 ---
 
 Sé preciso, estratégico y usa lenguaje natural basado en la conversación real.
-     Si la respuesta no está en el contenido, indica que no tienes esa información. Si la pregunta no está relacionada con el contenido, indica que no puedes responderla con la información proporcionada.\n\nContenido del documento:\n{context}"""),
+     Si la respuesta no está en el contenido, indica que no tienes esa información. Si la pregunta no está relacionada con el contenido, indica que no puedes responderla con la información proporcionada.\n\nContenido del documento:\n{context}
+     
+    Tras dar el resumen con la estructura anterior, responde a las preguntas del usuario de forma directa y concisa, basándote en el contenido del PDF y la transcripción de la reunión. Si no tienes información suficiente, indica que no puedes responder.\n"""),
     ("user", "Pregunta: {question}. Conversación: {transcript}" )
 ])
 
