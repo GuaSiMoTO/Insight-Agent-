@@ -1,8 +1,4 @@
 import os
-
-import torch
-from transformers import pipeline
-from pyannote.audio import Pipeline
 # import librosa
 # import soundfile as sf
 # import numpy as np
@@ -77,11 +73,10 @@ def process_youtube_audio(directory):
     finally:
         # --- Limpiar archivo temporal WAV generado ---
         if temp_audio_path.endswith('.wav') and os.path.exists(temp_audio_path):
-    
-    # --- Configuración ---
+            os.remove(temp_audio_path)
+            print(f"\n✅ Archivo temporal eliminado: {temp_audio_path}")
 
 # --- URL del Video de YouTube ---
-
 directory = "transcribe/zoom_audio"
 
 if __name__ == "__main__":

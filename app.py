@@ -14,15 +14,14 @@ st.write("Sube tus documentos PDF a la carpeta 'PDFs' y pregúntame lo que quier
 # ¡IMPORTANTE!: No compartas tu API key en código público.
 # Considera usar st.secrets para producción o variables de entorno.
 llm = GoogleGenerativeAI(
-
     model="gemini-2.5-flash",
-    google_api_key='AIzaSyB1379yvRoIEpbZe7FQKrt-lMLxHiQH_X8'
+    google_api_key='AIzaSyC8DBcCUTxAWsrVfyqk1s167x8Fi0kjS5Y'
 )
 
 # --- 1. Definir la carpeta donde están tus PDFs ---
 pdf_folder = "PDFs"
 
-# Inicializar estado de la sesión para el contenido del PDF y el historial del chat
+# Inicializar estado de la sesión para el cLimpiontenido del PDF y el historial del chat
 if 'full_combined_pdf_content' not in st.session_state:
     st.session_state.full_combined_pdf_content = ""
 if 'transcript' not in st.session_state:
@@ -63,7 +62,6 @@ def load_pdfs(folder):
     st.success("✅ Contenido de todos los PDFs cargado exitosamente.")
     return combined_content
 
-
 @st.cache_resource
 def load_transcript():
     with open("transcribe/transcription.txt", "r", encoding="utf-8") as transcript_file:
@@ -72,13 +70,11 @@ def load_transcript():
     
 
 # Cargar el contenido combinado de los PDFs al inicio
-
 # Cargar PDFs al inicio de la aplicación si no están cargados
 if not st.session_state.full_combined_pdf_content:
     st.session_state.full_combined_pdf_content = load_pdfs(pdf_folder)
     if not st.session_state.full_combined_pdf_content:
         st.stop() # Detener la ejecución si no hay contenido cargado
-
 
 if not st.session_state.transcript:
     st.session_state.transcript = load_transcript()
@@ -140,8 +136,7 @@ Sé preciso, estratégico y usa lenguaje natural basado en la conversación real
      
     Tras dar el resumen con la estructura anterior, responde a las preguntas del usuario de forma directa y concisa, basándote en el contenido del PDF y la transcripción de la reunión. Si no tienes información suficiente, indica que no puedes responder.\n"""),
     ("user", "Pregunta: {question}. Conversación: {transcript}" )
-=======
-# --- Preparar el Prompt con el Contenido del PDF ---
+])
 
 # Crea la cadena: prompt -> llm -> parser
 chain = prompt_template | llm | StrOutputParser()
@@ -170,7 +165,6 @@ if user_question:
                     "context": st.session_state.full_combined_pdf_content,
                     "question": user_question,
                     "transcript": st.session_state.transcript
-
                 })
                 st.markdown(response)
                 # Añadir respuesta del LLM al historial del chat
