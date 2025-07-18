@@ -15,13 +15,13 @@ st.write("Sube tus documentos PDF a la carpeta 'PDFs' y pregúntame lo que quier
 # Considera usar st.secrets para producción o variables de entorno.
 llm = GoogleGenerativeAI(
     model="gemini-2.5-flash",
-    google_api_key='AIzaSyB1379yvRoIEpbZe7FQKrt-lMLxHiQH_X8'
+    google_api_key='AIzaSyC8DBcCUTxAWsrVfyqk1s167x8Fi0kjS5Y'
 )
 
 # --- 1. Definir la carpeta donde están tus PDFs ---
 pdf_folder = "PDFs"
 
-# Inicializar estado de la sesión para el contenido del PDF y el historial del chat
+# Inicializar estado de la sesión para el cLimpiontenido del PDF y el historial del chat
 if 'full_combined_pdf_content' not in st.session_state:
     st.session_state.full_combined_pdf_content = ""
 if 'transcript' not in st.session_state:
