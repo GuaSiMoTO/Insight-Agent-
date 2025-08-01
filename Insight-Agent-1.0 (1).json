@@ -1,0 +1,933 @@
+{
+  "name": "Insight-Agent-1.0",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "13qOU6ObHYe5CbxGjOKqPISjiAsQ_6rc1",
+          "mode": "list",
+          "cachedResultName": "INPUT REUNION ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/13qOU6ObHYe5CbxGjOKqPISjiAsQ_6rc1"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        416
+      ],
+      "id": "beca3624-763a-4b9f-9518-49cfd54fb1a9",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "APPTS1cJ0LFQdmyQ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -176,
+        400
+      ],
+      "id": "8767cc79-bafc-42c1-a49e-c12290afb15c",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "APPTS1cJ0LFQdmyQ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "02bd10f3-fa0c-4705-bcf6-da90cc14a640",
+              "leftValue": "={{ $json.fileExtension }}",
+              "rightValue": "vtt",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        416
+      ],
+      "id": "c8cac82c-05f1-4afa-ba82-318995d60219",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        400
+      ],
+      "id": "b9d607ce-5509-43dc-a48c-e3280215fb41",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "sendTo": "alejandro.cabrera.pestana@gmail.com",
+        "subject": "=Insight Summary de la reunión del  {{ $('Google Drive Trigger').item.json.createdTime }}",
+        "message": "=<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      color: #333;\n      background-color: #f8f8f8;\n      padding: 20px;\n    }\n    h2 {\n      color: #b30000;\n    }\n    h3 {\n      color: #666;\n      margin-top: 20px;\n    }\n    ul {\n      padding-left: 20px;\n    }\n    li {\n      margin-bottom: 10px;\n    }\n    .section {\n      margin-bottom: 30px;\n    }\n\n    .boton-enlace {\n      background: linear-gradient(45deg, #b30000, #ff3333);\n      border: 1px solid transparent;\n      color: white;\n      padding: 12px 24px;\n      font-size: 16px;\n      border-radius: 8px;\n      cursor: pointer;\n      transition: all 0.3s ease;\n    }\n\n    .boton-enlace:hover {\n      background: linear-gradient(#e0e0e0, #cfcfcf);\n      color: #b30000;\n      border: 1px solid #b30000;\n    }\n\n    .boton-wrapper {\n      text-align: left;\n      margin-top: 40px;\n    }\n  </style>\n</head>\n<body>\n\n  <h2>Resumen de los mejores Insights de la reunión</h2>\n\n  <h3>Insights de Negocio</h3>\n  <ul>\n    <li>{{ $json.output['Insight de Negocio'][0] }}</li>\n    <li>{{ $json.output['Insight de Negocio'][1] }}</li>\n    <li>{{ $json.output['Insight de Negocio'][2] }}</li>\n  </ul>\n\n  <h3>Insights de Interacción</h3>\n  <ul>\n    <li>{{ $json.output['Insight de Interacción'][0] }}</li>\n    <li>{{ $json.output['Insight de Interacción'][1] }}</li>\n    <li>{{ $json.output['Insight de Interacción'][2] }}</li>\n  </ul>\n\n  <h3>Score de Interacción Insight Selling</h3>\n  <ul>\n    <li><strong>{{ $json.output['Score de Interacción Insight Selling'][0].tipo }}: {{ $json.output['Score de Interacción Insight Selling'][0].score }}</strong> {{ $json.output['Score de Interacción Insight Selling'][0].descripcion }}</li>\n    <li><strong>{{ $json.output['Score de Interacción Insight Selling'][1].tipo }}: {{ $json.output['Score de Interacción Insight Selling'][1].score }}</strong> {{ $json.output['Score de Interacción Insight Selling'][1].descripcion }}</li>\n    <li><strong>{{ $json.output['Score de Interacción Insight Selling'][2].tipo }}: {{ $json.output['Score de Interacción Insight Selling'][2].score }}</strong> {{ $json.output['Score de Interacción Insight Selling'][2].descripcion }}</li>\n  </ul>\n\n  <h3>Preguntas para Coaching del grupo</h3>\n\n  <strong>¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?</strong>\n  <ul>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?'][0] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?'][1] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?'][2] }}</li>\n  </ul>\n\n  <strong>¿Dónde puedes invitar al cliente a co-crear la solución contigo?</strong>\n  <ul>\n    <li>{{ $json.output['Preguntas para coaching']['¿Dónde puedes invitar al cliente a co-crear la solución contigo?'][0] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Dónde puedes invitar al cliente a co-crear la solución contigo?'][1] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Dónde puedes invitar al cliente a co-crear la solución contigo?'][2] }}</li>\n  </ul>\n\n  <strong>¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?</strong>\n  <ul>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?'][0] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?'][1] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?'][2] }}</li>\n  </ul>\n  <div class=\"boton-wrapper\">\n    <a href=\"https://688a291bd7735f39de31710f--unique-macaron-d9b0f4.netlify.app/\" target=\"_blank\" rel=\"noopener noreferrer\">\n      <button class=\"boton-enlace\">Ir al sitio web</button>\n    </a>\n  </div>\n\n</body>\n</html>\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        736,
+        208
+      ],
+      "id": "0d351207-68d0-4e0b-b2d9-51e91a6f27c1",
+      "name": "Send a message",
+      "webhookId": "0e7a4379-d8f4-4a21-a5df-af98b83ff836",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CJYODm9t8uAGYKUe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body[\"message\"] }}",
+        "options": {
+          "systemMessage": "=Actúa como Insight Agent, un analista senior en ventas consultivas estratégicas. Tu función es apoyar al equipo comercial con respuestas accionables, basadas en dos fuentes accesibles a través de herramientas RAG:\n\nDocumentos: teoría sobre Insight Selling, Challenger Sale e Inteligencia competitiva aplicada a ventas.\n\nReunión: transcripciones de reuniones recientes entre el director comercial y su equipo.\n\n✅ Objetivo principal\nExtraer insights clave de reuniones comerciales.\n\nBrindar recomendaciones estratégicas combinando teoría y práctica en ventas B2B.\n\nUsar SIEMPRE las herramientas disponibles para fundamentar tus respuestas.\n\nGarantizar respuestas precisas, claras y útiles para el equipo comercial.\n\n⚙️ Herramientas disponibles\n{tools} = ['Documentos', 'reunion']\n\nIMPORTANTE:\nHaz uso de las herramientas disponibles EN TODO MOMENTO, asegurate de usar tanto al herramienta \"Documentos\", como la herramienta \"reunion\" para garantizar la mejor respuesta\n\n🧠 Instrucciones clave\nNo envíes directamente el {input} al RAG.\n\nTransforma primero el input en una query optimizada siguiendo las reglas del Query Transformer más abajo.\n\nSi no puedes generar una query útil, responde de forma amable con:\n\n“Lo siento, no tengo información suficiente para responder a eso en este momento.”\n\nSi la información puede estar en un metadato (ej. fecha, participante, tema), aplica primero un filtro por metadatos en la base de datos vectorial antes de buscar el contenido.\n\nUsa siempre el resultado de las herramientas para generar la respuesta.\n\nUsa el historial de conversación ({input} y {output} anteriores) para mantener coherencia y continuidad.\n\n✏️ Transformación de Query (Query Transformer)\nAntes de buscar información, reformula el {input} del usuario en una consulta corta, precisa y enfocada para búsqueda semántica. Aplica las siguientes reglas:\n\nClasifica el input según intención:\nSi pregunta sobre reuniones: enfoca la query a “insights”, “comentarios”, “temas tratados” en la última reunión.\n\nSi es sobre teoría: enfoca en definiciones, modelos, recomendaciones.\n\nSi busca aplicación de teoría en casos reales: combina teoría con ejemplos de reuniones.\n\nSi está fuera de contexto comercial: no transformes, responde de forma amable.\n\nExtrae:\nTema principal (competencia, objeciones, pricing, etc.)\n\nPersona o rol (ej.: director comercial)\n\nTemporalidad (ej.: “última reunión”, “reunión del lunes”)\n\nTipo de información buscada (opinión, definición, ejemplo, recomendación)\n\nEjemplos de transformación:\nInput: “¿Qué dijo el director comercial sobre la competencia en la última reunión?”\n→ Query: comentarios del director comercial sobre competencia\n\nInput: “¿Cómo se aplica Challenger Sale en una venta consultiva?”\n→ Query: aplicación de Challenger Sale en ventas consultivas\n\nInput: “¿Qué aprendizajes dejó la reunión del viernes?”\n→ Query: insights clave de la reunión del viernes\n\n✍️ Estilo de respuesta\nClaro, consultivo, directo y orientado a resultados de negocio.\n\nSintetiza la información esencial sin extenderte innecesariamente.\n\nEvita respuestas vacías. Si no hay datos suficientes, responde:\n\n“Lo siento, no tengo información suficiente para responder a eso en este momento.”\n\nNo muestres el proceso interno de búsqueda ni menciones el uso de “RAG”, “vector”, ni “query transform”.\n\nSi el input no está dentro del contexto de ventas estratégicas, responde de forma cordial, manteniéndote dentro de tu dominio.\n\nINSTRUCCIÓN DE PROCESO OBLIGATORIO (Regla Maestra):\n\nPara CADA consulta del usuario, SIN EXCEPCIÓN, tu primer paso DEBE SER ejecutar una búsqueda activa en las herramientas\nreunion\ny/o\nDocumentos\n\nPROHIBIDO RESPONDER ÚNICAMENTE DE MEMORIA: Queda estrictamente prohibido usar SOLO la memoria de la conversación o el contexto previo para obtener datos factuales (nombres, fechas, temas, clientes). El historial de la conversación solo se usará para entender la pregunta, no para responderla.\nVERIFICACIÓN ANTES DE RESPUESTA: No puedes generar ninguna respuesta hasta que hayas consultado la información más reciente de las herramientas.\nFUNDAMENTACIÓN EXPLÍCITA: Basa tu respuesta ÚNICAMENTE en los resultados obtenidos de las herramientas en el momento de la consulta.\nSi por alguna razón no puedes consultar las herramientas, la única respuesta permitida es: \"Estoy experimentando un problema para acceder a mis fuentes de datos\" y sugiere una manera de encaminar la conversación.\n\nPROHIBIDO SACAR EL TEXTO DE RAZONAMIENTO/PENSAMEINTO COMO OUTPUT.\n\nNUNCA RESPONDAS CON UN OUTPUT VACIO: En caso de no tener contexo, responde: \"Lo siento no tengo información suficiente para responder en ese momento\" y dale sugiere maneras para reorientar la pregunta a tus capacidades.",
+          "returnIntermediateSteps": true,
+          "batching": {
+            "batchSize": 5
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        528,
+        672
+      ],
+      "id": "b0b54766-102e-4c5a-a653-e08c476d39c5",
+      "name": "AI Agent1",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "retryOnFail": true,
+      "notesInFlow": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        576,
+        816
+      ],
+      "id": "57104cd2-0da2-4d44-b3e3-b14164f10e55",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AAR7SIhCxugsRNhL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "accede siempre a la base de datos extrae la informacion de la tabla n8n-RAG, sobretodo cuando tengas que hacer analisis de Insight de reuniones. Lee y usa lo necesario para contestar la pregunta. Contesta en español",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "documents - RAG",
+          "mode": "list",
+          "cachedResultName": "documents - RAG"
+        },
+        "topK": 10,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        784
+      ],
+      "id": "0ffd9b94-fe33-4e7f-89ce-06f97505bf2a",
+      "name": "Documentos",
+      "credentials": {
+        "qdrantApi": {
+          "id": "PDpx1Hh5U1LqkXXS",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        96,
+        880
+      ],
+      "id": "735d6921-7214-4f89-bacd-7cee4a3adac4",
+      "name": "Embeddings Google Gemini2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AAR7SIhCxugsRNhL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## RAG AI Agent\n ",
+        "height": 608,
+        "width": 1092
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1008,
+        -784
+      ],
+      "typeVersion": 1,
+      "id": "77d10f60-639f-452f-9432-54ec2895b06c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"ResumenInsightsReunion\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"Insight de Negocio\": {\n      \"type\": \"array\",\n      \"minItems\": 3,\n      \"maxItems\": 3,\n      \"items\": { \"type\": \"string\" }\n    },\n    \"Insight de Interacción\": {\n      \"type\": \"array\",\n      \"minItems\": 3,\n      \"maxItems\": 3,\n      \"items\": { \"type\": \"string\" }\n    },\n    \"Score de Interacción Insight Selling\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"tipo\": {\n            \"type\": \"string\",\n            \"enum\": [\"Connect\", \"Convince\", \"Collaborate\"]\n          },\n          \"score\": {\n            \"type\": \"number\",\n            \"minimum\": 0,\n            \"maximum\": 5\n          },\n          \"descripcion\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\"tipo\", \"score\", \"descripcion\"]\n      },\n      \"minItems\": 3,\n      \"maxItems\": 3\n    },\n    \"Preguntas para coaching\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?\": {\n          \"type\": \"array\",\n          \"minItems\": 3,\n          \"maxItems\": 3,\n          \"items\": { \"type\": \"string\" }\n        },\n        \"¿Dónde puedes invitar al cliente a co-crear la solución contigo?\": {\n          \"type\": \"array\",\n          \"minItems\": 3,\n          \"maxItems\": 3,\n          \"items\": { \"type\": \"string\" }\n        },\n        \"¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?\": {\n          \"type\": \"array\",\n          \"minItems\": 3,\n          \"maxItems\": 3,\n          \"items\": { \"type\": \"string\" }\n        }\n      },\n      \"required\": [\n        \"¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?\",\n        \"¿Dónde puedes invitar al cliente a co-crear la solución contigo?\",\n        \"¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?\"\n      ]\n    }\n  },\n  \"required\": [\n    \"Insight de Negocio\",\n    \"Insight de Interacción\",\n    \"Score de Interacción Insight Selling\",\n    \"Preguntas para coaching\"\n  ]\n}\n",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        288
+      ],
+      "id": "2cc34efc-5dff-4044-b607-48482cc5fc2a",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Tool Purpose:\nThis tool is designed to store and manage all meetings organized within the sales department.\n\nUsage Instructions:\nUse this tool for any query or request related to sales department meetings, including but not limited to:\n\nRetrieving information about a specific meeting\n\nListing recent or past meetings\n\nProviding tips or insights based on meeting content\n\nAccessing details about clients, topics, or sections mentioned during meetings\n\nAny other meeting-related inquiries\n\nThis tool should be used as the primary source for all sales meeting data.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "reunion-2",
+          "mode": "id"
+        },
+        "topK": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        912
+      ],
+      "id": "7805b744-435a-4bb4-a5a5-91522a8a37b4",
+      "name": "reunion",
+      "credentials": {
+        "qdrantApi": {
+          "id": "PDpx1Hh5U1LqkXXS",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        128
+      ],
+      "id": "e5e678ae-2942-4544-b7e5-e88516ba2685",
+      "name": "Embeddings Google Gemini3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AAR7SIhCxugsRNhL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "Date",
+                "value": "={{ $('Download file').item.json.createdTime }}"
+              },
+              {
+                "name": "Topic",
+                "value": "={{ ($('Download file').item.json.originalFilename || '').slice(0, -4) }}"
+              },
+              {
+                "name": "ID",
+                "value": "={{ $('Download file').item.json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        128
+      ],
+      "id": "f3376a23-3103-46e5-ae92-f0a3729817c2",
+      "name": "Default Data Loader2"
+    },
+    {
+      "parameters": {
+        "chunkSize": 200,
+        "chunkOverlap": 75,
+        "options": {
+          "splitCode": "=\\d{2}:\\d{2}:\\d{2}\\.\\d{3}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b99213ad-0dcb-4169-b470-a6e198d384fe",
+      "name": "Recursive Character Text Splitter2"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "reunion-2",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        -80,
+        240
+      ],
+      "id": "eaf8c9c8-1369-441c-a5c1-56b88b12a3f3",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "PDpx1Hh5U1LqkXXS",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=Cristian7",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        816
+      ],
+      "id": "c816d9bb-b8d7-40b0-902b-d3d6c70f78c0",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "pNwGPbfr74KQ5pXp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        560,
+        176
+      ],
+      "id": "913c689f-ef06-42f8-b1a3-54f57122488a",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AAR7SIhCxugsRNhL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "cris.g.jobs@gmail.com",
+        "subject": "=Insight Summary de la reunión del {{ $('Download file').item.json.createdTime }}",
+        "message": "=<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      color: #333;\n      background-color: #f8f8f8;\n      padding: 20px;\n    }\n    h2 {\n      color: #b30000;\n    }\n    h3 {\n      color: #666;\n      margin-top: 20px;\n    }\n    ul {\n      padding-left: 20px;\n    }\n    li {\n      margin-bottom: 10px;\n    }\n    .section {\n      margin-bottom: 30px;\n    }\n\n    .boton-enlace {\n      background: linear-gradient(45deg, #b30000, #ff3333);\n      border: 1px solid transparent;\n      color: white;\n      padding: 12px 24px;\n      font-size: 16px;\n      border-radius: 8px;\n      cursor: pointer;\n      transition: all 0.3s ease;\n    }\n\n    .boton-enlace:hover {\n      background: linear-gradient(#e0e0e0, #cfcfcf);\n      color: #b30000;\n      border: 1px solid #b30000;\n    }\n\n    .boton-wrapper {\n      text-align: left;\n      margin-top: 40px;\n    }\n  </style>\n</head>\n<body>\n\n  <h2>Resumen de los mejores Insights de la reunión</h2>\n\n  <h3>Insights de Negocio</h3>\n  <ul>\n    <li>{{ $json.output['Insight de Negocio'][0] }}</li>\n    <li>{{ $json.output['Insight de Negocio'][1] }}</li>\n    <li>{{ $json.output['Insight de Negocio'][2] }}</li>\n  </ul>\n\n  <h3>Insights de Interacción</h3>\n  <ul>\n    <li>{{ $json.output['Insight de Interacción'][0] }}</li>\n    <li>{{ $json.output['Insight de Interacción'][1] }}</li>\n    <li>{{ $json.output['Insight de Interacción'][2] }}</li>\n  </ul>\n\n  <h3>Score de Interacción Insight Selling</h3>\n  <ul>\n    <li><strong>{{ $json.output['Score de Interacción Insight Selling'][0].tipo }}: {{ $json.output['Score de Interacción Insight Selling'][0].score }}</strong> {{ $json.output['Score de Interacción Insight Selling'][0].descripcion }}</li>\n    <li><strong>{{ $json.output['Score de Interacción Insight Selling'][1].tipo }}: {{ $json.output['Score de Interacción Insight Selling'][1].score }}</strong> {{ $json.output['Score de Interacción Insight Selling'][1].descripcion }}</li>\n    <li><strong>{{ $json.output['Score de Interacción Insight Selling'][2].tipo }}: {{ $json.output['Score de Interacción Insight Selling'][2].score }}</strong> {{ $json.output['Score de Interacción Insight Selling'][2].descripcion }}</li>\n  </ul>\n\n  <h3>Preguntas para Coaching del grupo</h3>\n\n  <strong>¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?</strong>\n  <ul>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?'][0] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?'][1] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?'][2] }}</li>\n  </ul>\n\n  <strong>¿Dónde puedes invitar al cliente a co-crear la solución contigo?</strong>\n  <ul>\n    <li>{{ $json.output['Preguntas para coaching']['¿Dónde puedes invitar al cliente a co-crear la solución contigo?'][0] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Dónde puedes invitar al cliente a co-crear la solución contigo?'][1] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Dónde puedes invitar al cliente a co-crear la solución contigo?'][2] }}</li>\n  </ul>\n\n  <strong>¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?</strong>\n  <ul>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?'][0] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?'][1] }}</li>\n    <li>{{ $json.output['Preguntas para coaching']['¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?'][2] }}</li>\n  </ul>\n  <div class=\"boton-wrapper\">\n    <a href=\"https://688a291bd7735f39de31710f--unique-macaron-d9b0f4.netlify.app/\" target=\"_blank\" rel=\"noopener noreferrer\">\n      <button class=\"boton-enlace\">Ir al sitio web</button>\n    </a>\n  </div>\n\n</body>\n</html>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        736,
+        336
+      ],
+      "id": "93ff9c5a-f5ab-476a-a07a-e65b1dcc2b25",
+      "name": "Send a message1",
+      "webhookId": "0e7a4379-d8f4-4a21-a5df-af98b83ff836",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CJYODm9t8uAGYKUe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat-input",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        352,
+        672
+      ],
+      "id": "465a5a35-d93c-4332-997f-69e7a0e0e4dc",
+      "name": "Webhook",
+      "webhookId": "b0d7890b-df2d-4c13-8257-26f1dfd07788"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        848,
+        672
+      ],
+      "id": "e5e56453-b099-4b89-a82b-afa3d7c1ed70",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "Insight-Summary",
+        "fields": "=summary, date",
+        "options": {
+          "dateFields": "date"
+        }
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        464
+      ],
+      "id": "f1cef458-88d1-4112-a114-575321b98711",
+      "name": "MongoDB",
+      "credentials": {
+        "mongoDb": {
+          "id": "JrxMDa04cHXVOGQ6",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb101c4c-c274-4ba8-897f-9336cf79b57d",
+              "name": "summary",
+              "value": "={{ $json.output }}",
+              "type": "object"
+            },
+            {
+              "id": "59d73e9b-2803-46c2-a2dc-96fc78fe0dc2",
+              "name": "date",
+              "value": "={{ $('Download file').item.json.createdTime }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        464
+      ],
+      "id": "4a872e2d-83b9-4a8a-85b0-756622c81e2f",
+      "name": "Estructurar documento"
+    },
+    {
+      "parameters": {
+        "content": "Trigger - conseguir summaries",
+        "height": 208,
+        "width": 512,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        656
+      ],
+      "id": "92bdea37-979a-4821-a37c-6b3779ea4735",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "path": "d51afda1-d530-4831-a273-532a51644302-mongodb",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1520,
+        688
+      ],
+      "id": "387473f6-02c1-44cb-8c99-9dcbbb72a2e9",
+      "name": "Webhook1",
+      "webhookId": "d51afda1-d530-4831-a273-532a51644302"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1248,
+        688
+      ],
+      "id": "a0d0433e-700c-47bc-8452-56bc086041cc",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "collection": "Insight-Summary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -1376,
+        688
+      ],
+      "id": "c1e8bffb-d02d-4f52-8fd2-ee1452a33e92",
+      "name": "MongoDB1",
+      "credentials": {
+        "mongoDb": {
+          "id": "JrxMDa04cHXVOGQ6",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Dame insights de la siguiente reunion:  {{ $json[\"data\"] }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=\"system\": \"Prompt Insight Agent – Análisis de Reunión Comercial (Versión Reducida y Afinada)\nActúa como Insight Agent, un observador experto en ventas consultivas avanzadas e innovación comercial.\nTu tarea es analizar la conversación usando las metodologías Insight Selling, Challenger Sale, y marcos de inteligencia competitiva. \nEsta teoría es accesible a través de la {herramienta} \"Documentos\".\nUsa el input de la reunión para determinar la mejor query que aportar a la base de datos vectorial y obtener los documentos adecuados para ejecutar un buen resumen.\n\n{herramienta} = \"Documentos\"\nDevuelve el siguiente análisis estructurado cuando te lo pidan:\n\nSigue estos pasos:\nAnalizar el input de la reunión.\nFormular una query para la base de datos Documentos.\nEjecutar la herramienta default_api.Documentos(input=query_generada) para obtener el contexto relevante.\nPosteriormente, usar ese contexto para elaborar el análisis estructurado solicitado en base a este prompt.\n\nConserva las palabras clave en inglés\n\n🔥 Resumen de los mejores Insights de la reunión:\n\nEscoge los 3 de Insights de Negocio más reveladores  (por ejemplo Tendencias o riesgos no considerados, Comparativas con competidores, Cambios regulatorios o de comportamiento).\n\nEscoge los 3 de Insights de Interacción más reveladores (por ejemplo Preguntas que llevaron a replanteo, Momentos de conexión o reflexión compartida, Cambios o aceleradores en el proceso de compra)\n\n🔥 Score de Interacción Insight Selling de toda la reunión \n\nEvalúa del 0 al 5 el contenido de la reunión en su conjunto (no del cliente o comercial, de la reunión en su conjunto):\n\nConnect: ¿Se generó una conexión significativa con el cliente?\nConvince: ¿Se presentó una narrativa persuasiva e impactante?\nCollaborate: ¿Se fomentó la co-creación o participación activa del cliente?\n\nIncluye una breve justificación por dimensión.\n\n🔥Preguntas para Coaching del grupo, \n\nElige 3 por cada pregunta.\n\n¿Qué idea desafiante podrías insertar en la siguiente conversación con el cliente?\n\n¿Dónde puedes invitar al cliente a co-crear la solución contigo?\n\n¿Qué parte de tu narrativa actual podrías reencuadrar en términos de impacto de negocio?\n\nSé preciso, sintético, estratégico y usa lenguaje natural basado en la conversación real.\n\nIMPORTANT: Dont use text.trim function ever, since it isnt necessary"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        128,
+        400
+      ],
+      "id": "65076c92-8a59-4e82-9bb2-cfb1db657686",
+      "name": "Insight Summary",
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "modelName": "rerank-multilingual-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        960
+      ],
+      "id": "8cbf18f4-72fe-4ecf-a771-d340443115be",
+      "name": "Reranker Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "Wn6I2lAAmi58a5yc",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "rerank-multilingual-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        832
+      ],
+      "id": "5ff49bb0-150d-4dab-b801-6d39a796bb43",
+      "name": "Reranker Cohere1",
+      "credentials": {
+        "cohereApi": {
+          "id": "Wn6I2lAAmi58a5yc",
+          "name": "CohereApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Insight Summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Insight Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Documentos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Insight Summary",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Documentos",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "reunion",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Insight Summary",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reunion": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader2": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter2": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader2",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estructurar documento": {
+      "main": [
+        [
+          {
+            "node": "MongoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "MongoDB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insight Summary": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Estructurar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reranker Cohere": {
+      "ai_reranker": [
+        []
+      ]
+    },
+    "Reranker Cohere1": {
+      "ai_reranker": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "12746255-4294-4532-b459-887d1b608632",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5e88255b923731d7fc5323f141cd9a6ccab5e6d864a966e7e4b93ada57833c4c"
+  },
+  "id": "WV774xQglm8JAm5q",
+  "tags": []
+}
